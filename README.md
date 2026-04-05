@@ -34,7 +34,7 @@ The game shell is **landscape-only**: `app.json` sets `"orientation": "landscape
 Generated games should import a single component and pass `controlTemplate` from your planner:
 
 ```ts
-import { ControlTemplate } from '@/game/controls';
+import { ControlTemplate } from '@/game-ui/controls';
 ```
 
 | ID | Role |
@@ -44,11 +44,11 @@ import { ControlTemplate } from '@/game/controls';
 | **C** | One stick + tap zone + secondary hold. |
 | **D** | Swipe strip + three lane buttons + primary action. |
 
-Touch handling uses **react-native-gesture-handler** and **react-native-reanimated** only (no mixed gesture stacks). See `src/game/controls/README.md` for callback props and layering notes with `expo-gl` / Three.
+Touch handling uses **react-native-gesture-handler** and **react-native-reanimated** only (no mixed gesture stacks). See `src/game-ui/controls/README.md` for callback props and layering notes with `expo-gl` / Three.
 
-Use **`GameShell`** (`@/game/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
+Use **`GameShell`** (`@/game-ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`TestScene`** (`@/game/TestScene`) renders a minimal **Three.js** cube on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`app/index.tsx`) stays minimal so generated games and agents can own it; the **full demo** (cube + switcher + controls + Metro logging) lives only on the **dev route** `/dev-controls` (`app/dev-controls.tsx`, `__DEV__` only).
+**`TestScene`** (`@/game-ui/TestScene`) renders a minimal **Three.js** cube on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game-ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`app/index.tsx`) shows the main **`GameScreen`** (R3F) from `main` and, in **`__DEV__`**, a **Control QA** link to **`/dev-controls`**; the **full control-template demo** (TestScene + switcher + Metro logging) lives on **`/dev-controls`** (`app/dev-controls.tsx`, `__DEV__` only).
 
 ### Dependencies (controls & orientation)
 

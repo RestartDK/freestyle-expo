@@ -1,6 +1,6 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
-import type { ControlTemplateId } from '@/game/controls';
+import type { ControlTemplateId } from '@/game-ui/controls';
 
 const ORDER: ControlTemplateId[] = ['A', 'B', 'C', 'D'];
 

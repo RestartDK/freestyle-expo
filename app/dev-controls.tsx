@@ -2,11 +2,11 @@ import { Redirect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import { ControlTemplateSwitcher } from '@/game/ControlTemplateSwitcher';
-import { GameShell } from '@/game/GameShell';
-import { TestScene } from '@/game/TestScene';
-import type { ControlTemplateId, Vec2 } from '@/game/controls';
-import { ControlTemplate } from '@/game/controls';
+import { ControlTemplateSwitcher } from '@/game-ui/ControlTemplateSwitcher';
+import { GameShell } from '@/game-ui/GameShell';
+import { TestScene } from '@/game-ui/TestScene';
+import type { ControlTemplateId, Vec2 } from '@/game-ui/controls';
+import { ControlTemplate } from '@/game-ui/controls';
 
 export default function DevControlsScreen() {
   const [template, setTemplate] = useState<ControlTemplateId>('A');

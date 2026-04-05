@@ -2,43 +2,40 @@ import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { GameScreen } from '@/components/game/GameScreen';
 
 /**
- * Minimal app shell — no game demo here so agents and generated code can own this route.
- * In __DEV__, a footer link navigates to `/dev-controls` (Control QA). Production has no demo UI.
+ * Main game shell from `main` (R3F `GameScreen`). In __DEV__, a footer link opens
+ * `/dev-controls` for touch-template QA (`TestScene` + `ControlTemplate`).
  */
 export default function Index() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.center}>
-        <ThemedText type="title">Let&apos;s build.</ThemedText>
-      </View>
+    <View style={styles.root}>
+      <GameScreen />
       {__DEV__ ? (
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]} pointerEvents="box-none">
           <Link href="/dev-controls" style={styles.devLink}>
             Control QA
           </Link>
         </View>
       ) : null}
-    </ThemedView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   footer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
     alignItems: 'center',
+    zIndex: 10,
   },
   devLink: {
     color: '#7ab8ff',
