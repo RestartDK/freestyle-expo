@@ -1,20 +1,5 @@
-import { StyleSheet } from 'react-native';
-
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { GameScreen } from '@/components/game/GameScreen';
 
 export default function Index() {
-  return (
-    <ThemedView style={styles.container}>
-      <ThemedText type="title">Let's build.</ThemedText>
-    </ThemedView>
-  );
+  return <GameScreen />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
