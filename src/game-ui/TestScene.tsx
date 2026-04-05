@@ -10,6 +10,7 @@ import barrelGlb from '@/assets/harness/barrel.glb';
 import blockGrassGlb from '@/assets/harness/block-grass.glb';
 import coinGoldGlb from '@/assets/harness/coin-gold.glb';
 import flagGlb from '@/assets/harness/flag.glb';
+import colormapPng from '@/assets/harness/Textures/colormap.png';
 
 /**
  * Rotating row of Kenney platformer GLBs on `expo-gl` + Three.js — base scene under touch controls.
@@ -78,8 +79,22 @@ export function TestScene() {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const group = new THREE.Group();
-    const loader = new GLTFLoader();
     const spacing = 1.85;
+
+    /** Kenney GLBs reference `Textures/colormap.png` next to the file; Expo copies each asset separately, so remap to the bundled texture. */
+    const colormapAsset = Asset.fromModule(colormapPng);
+    await colormapAsset.downloadAsync();
+    const colormapUri = colormapAsset.localUri ?? colormapAsset.uri;
+
+    const loadingManager = new THREE.LoadingManager();
+    loadingManager.setURLModifier((url) => {
+      if (url.includes('colormap.png')) {
+        return colormapUri ?? url;
+      }
+      return url;
+    });
+
+    const loader = new GLTFLoader(loadingManager);
 
     try {
       for (let i = 0; i < DEMO_GLBS.length; i++) {
