@@ -23,3 +23,5 @@
 ## Layering with `expo-gl` / Three
 
 Use `GameShell` from `@/game/GameShell`: the GL / `GLView` child gets `pointerEvents="none"`; controls render in a sibling overlay with `pointerEvents="box-none"` on the wrapper and interactive children handling touches.
+
+The repo includes **`TestScene`** (`@/game/TestScene`) — a rotating cube on `expo-gl` + Three.js — and wires it on the **dev-only** route **`/dev-controls`** with **`ControlTemplateSwitcher`** (`@/game/ControlTemplateSwitcher`) for **A–D**. The **app root** (`/`) is intentionally minimal; use the dev route for manual control QA.

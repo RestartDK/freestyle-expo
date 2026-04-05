@@ -4,16 +4,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
-1. Install dependencies
+1. Install dependencies ([Bun](https://bun.sh))
 
    ```bash
-   npm install
+   bun install
    ```
 
 2. Start the app
 
    ```bash
-   npx expo start
+   bunx expo start
    ```
 
 In the output, you'll find options to open the app in a
@@ -48,6 +48,8 @@ Touch handling uses **react-native-gesture-handler** and **react-native-reanimat
 
 Use **`GameShell`** (`@/game/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
+**`TestScene`** (`@/game/TestScene`) renders a minimal **Three.js** cube on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`app/index.tsx`) stays minimal so generated games and agents can own it; the **full demo** (cube + switcher + controls + Metro logging) lives only on the **dev route** `/dev-controls` (`app/dev-controls.tsx`, `__DEV__` only).
+
 ### Dependencies (controls & orientation)
 
 - **`expo-screen-orientation`** — runtime landscape lock on iOS/Android (with `app.json` orientation).
@@ -55,15 +57,15 @@ Use **`GameShell`** (`@/game/GameShell`) so the GL view sits under a full-screen
 
 ## How to test
 
-1. **Dev QA screen (manual)** — Run `npx expo start`, open the app in dev, then use **“Open control template QA (dev)”** on the home screen (or navigate to `/dev-controls`). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
-2. **Automated smoke test** — `npm test` runs Jest and mounts template **A** with a `testID` on the joystick.
+1. **Dev QA screen (manual)** — Run `bunx expo start`. In **development** builds, the home screen has a **Control QA** link that navigates to **`/dev-controls`** (you can also open that URL directly). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+2. **Automated smoke test** — `bun run test` runs Jest and mounts template **A** with a `testID` on the joystick.
 
 ## Get a fresh project
 
 When you're ready, run:
 
 ```bash
-npm run reset-project
+bun run reset-project
 ```
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.

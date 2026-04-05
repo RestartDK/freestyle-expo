@@ -1,15 +1,14 @@
-import { Redirect, useRouter } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
+import { ControlTemplateSwitcher } from '@/game/ControlTemplateSwitcher';
 import { GameShell } from '@/game/GameShell';
+import { TestScene } from '@/game/TestScene';
 import type { ControlTemplateId, Vec2 } from '@/game/controls';
 import { ControlTemplate } from '@/game/controls';
 
-const ORDER: ControlTemplateId[] = ['A', 'B', 'C', 'D'];
-
 export default function DevControlsScreen() {
-  const router = useRouter();
   const [template, setTemplate] = useState<ControlTemplateId>('A');
 
   const log = useCallback((label: string, payload?: unknown) => {
@@ -33,24 +32,17 @@ export default function DevControlsScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.toolbar}>
-        <Pressable onPress={() => router.back()} style={styles.toolbarBtn}>
-          <Text style={styles.toolbarBtnText}>Back</Text>
-        </Pressable>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-          {ORDER.map((id) => (
-            <Pressable
-              key={id}
-              onPress={() => setTemplate(id)}
-              style={[styles.chip, template === id && styles.chipActive]}
-            >
-              <Text style={styles.chipText}>{id}</Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+        <View style={styles.toolbarTitle}>
+          <Text style={styles.toolbarHeading}>Control QA</Text>
+          <Text style={styles.toolbarSub}>TestScene + templates A–D</Text>
+        </View>
+        <View style={styles.toolbarSwitcher}>
+          <ControlTemplateSwitcher value={template} onChange={setTemplate} />
+        </View>
       </View>
       <View style={styles.shellWrap}>
         <GameShell
-          scene={<View style={styles.scene} />}
+          scene={<TestScene />}
           overlay={<ControlTemplate template={template} {...stubCallbacks} />}
         />
       </View>
@@ -64,32 +56,27 @@ const styles = StyleSheet.create({
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
     paddingHorizontal: 8,
-    paddingVertical: 6,
+    paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: 'rgba(255,255,255,0.12)',
   },
-  toolbarBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+  toolbarTitle: {
+    flexShrink: 0,
   },
-  toolbarBtnText: { color: '#fff', fontWeight: '600' },
-  chips: { alignItems: 'center', gap: 6 },
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+  toolbarHeading: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 15,
   },
-  chipActive: {
-    backgroundColor: 'rgba(100,180,255,0.35)',
+  toolbarSub: {
+    color: 'rgba(255,255,255,0.45)',
+    fontSize: 11,
+    marginTop: 2,
   },
-  chipText: { color: '#fff', fontWeight: '700' },
-  scene: {
+  toolbarSwitcher: {
     flex: 1,
-    backgroundColor: '#0a0a12',
+    minWidth: 0,
   },
 });
