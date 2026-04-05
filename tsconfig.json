@@ -3,6 +3,12 @@
   "compilerOptions": {
     "strict": true,
     "paths": {
+      "@/game/*": [
+        "./game/*"
+      ],
+      "@/game-ui/*": [
+        "./src/game-ui/*"
+      ],
       "@/*": [
         "./*"
       ]

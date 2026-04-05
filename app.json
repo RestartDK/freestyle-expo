@@ -3,7 +3,7 @@
     "name": "freestyle-expo",
     "slug": "freestyle-expo",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/images/icon.png",
     "scheme": "freestyleexpo",
     "userInterfaceStyle": "automatic",
@@ -23,6 +23,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-screen-orientation",
       [
         "expo-splash-screen",
         {

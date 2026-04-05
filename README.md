@@ -4,16 +4,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
-1. Install dependencies
+1. Install dependencies ([Bun](https://bun.sh))
 
    ```bash
-   npm install
+   bun install
    ```
 
 2. Start the app
 
    ```bash
-   npx expo start
+   bunx expo start
    ```
 
 In the output, you'll find options to open the app in a
@@ -25,12 +25,47 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Orientation
+
+The game shell is **landscape-only**: `app.json` sets `"orientation": "landscape"`, and the root layout calls `expo-screen-orientation` on native to lock landscape after launch. When you use **web preview** or **Expo Go**, rotate the window or device to **landscape** so thumb zones and layout match how the shell is designed and tested.
+
+## Control templates (A–D)
+
+Generated games should import a single component and pass `controlTemplate` from your planner:
+
+```ts
+import { ControlTemplate } from '@/game-ui/controls';
+```
+
+| ID | Role |
+|----|------|
+| **A** | Left virtual joystick + primary action (right). |
+| **B** | Twin sticks: move + aim / look. |
+| **C** | One stick + tap zone + secondary hold. |
+| **D** | Swipe strip + three lane buttons + primary action. |
+
+Touch handling uses **react-native-gesture-handler** and **react-native-reanimated** only (no mixed gesture stacks). See `src/game-ui/controls/README.md` for callback props and layering notes with `expo-gl` / Three.
+
+Use **`GameShell`** (`@/game-ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
+
+**`TestScene`** (`@/game-ui/TestScene`) renders a minimal **Three.js** cube on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game-ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`app/index.tsx`) shows the main **`GameScreen`** (R3F) from `main` and, in **`__DEV__`**, a **Control QA** link to **`/dev-controls`**; the **full control-template demo** (TestScene + switcher + Metro logging) lives on **`/dev-controls`** (`app/dev-controls.tsx`, `__DEV__` only).
+
+### Dependencies (controls & orientation)
+
+- **`expo-screen-orientation`** — runtime landscape lock on iOS/Android (with `app.json` orientation).
+- **`react-native-gesture-handler`** / **`react-native-reanimated`** — virtual sticks and knob motion (already in the template).
+
+## How to test
+
+1. **Dev QA screen (manual)** — Run `bunx expo start`. In **development** builds, the home screen has a **Control QA** link that navigates to **`/dev-controls`** (you can also open that URL directly). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+2. **Automated smoke test** — `bun run test` runs Jest and mounts template **A** with a `testID` on the joystick.
+
 ## Get a fresh project
 
 When you're ready, run:
 
 ```bash
-npm run reset-project
+bun run reset-project
 ```
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.

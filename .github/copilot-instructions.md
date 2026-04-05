@@ -9,12 +9,12 @@ Freestyle Expo is a React Native mobile application built with Expo that support
 ### Bootstrap and Build
 Run these commands in sequence to set up and build the project:
 
-1. **Install dependencies**: `npm install` 
+1. **Install dependencies**: `bun install` 
    - Takes approximately 34 seconds
    - Downloads ~946 packages including Expo SDK and React Native dependencies
    - May show deprecation warnings for some packages - these are normal
 
-2. **Lint the code**: `npm run lint`
+2. **Lint the code**: `bun run lint`
    - Takes approximately 2.5 seconds
    - Uses ESLint with expo-config-eslint configuration
    - Always run before committing changes
@@ -23,7 +23,7 @@ Run these commands in sequence to set up and build the project:
 
 **Start development server for all platforms:**
 ```bash
-npx expo start
+bunx expo start
 ```
 - NEVER CANCEL: Server startup takes 20-30 seconds. Set timeout to 60+ minutes.
 - Runs on port 8081 by default
@@ -31,9 +31,9 @@ npx expo start
 
 **Start web development server:**
 ```bash
-npm run dev
+bun run dev
 # OR
-npx expo start --web --port 3000
+bunx expo start --web --port 3000
 ```
 - NEVER CANCEL: Web server startup takes 25-30 seconds. Set timeout to 60+ minutes.
 - Accessible at http://localhost:3000
@@ -41,18 +41,18 @@ npx expo start --web --port 3000
 
 **Platform-specific development:**
 ```bash
-npm run android    # Android emulator
-npm run ios        # iOS simulator  
-npm run web        # Web browser
+bun run android    # Android emulator
+bun run ios        # iOS simulator  
+bun run web        # Web browser
 ```
 
 ### Production Build
 
 **Export static web build:**
 ```bash
-npx expo export --platform web
+bunx expo export --platform web
 # OR for unminified development build:
-npx expo export --platform web --no-minify
+bunx expo export --platform web --no-minify
 ```
 - NEVER CANCEL: Build takes 22-25 seconds. Set timeout to 60+ minutes.
 - Outputs to `dist/` directory
@@ -75,8 +75,8 @@ After making changes, ALWAYS perform these validation steps:
 ### Validation Commands
 Always run these commands before completing your work:
 ```bash
-npm run lint          # Check code style (2.5 seconds)
-npx expo export --platform web --no-minify  # Verify build works (22+ seconds)
+bun run lint          # Check code style (2.5 seconds)
+bunx expo export --platform web --no-minify  # Verify build works (22+ seconds)
 ```
 
 ### Expected Build Artifacts
@@ -165,15 +165,15 @@ dist/
 - **eslint.config.js**: Code linting rules
 
 ### Project Reset
-Run `npm run reset-project` to move current app to `app-example/` and create blank app structure.
+Run `bun run reset-project` to move current app to `app-example/` and create blank app structure.
 
 ## Troubleshooting
 
 ### Common Issues
 - **Port conflicts**: Use `--port 3000` flag or different port numbers
-- **Metro bundler issues**: Clear cache with `npx expo start --clear`
+- **Metro bundler issues**: Clear cache with `bunx expo start --clear`
 - **TypeScript errors**: Ensure all imports use proper path aliases (`@/`)
-- **Build failures**: Check for syntax errors and run `npm run lint`
+- **Build failures**: Check for syntax errors and run `bun run lint`
 
 ### Environment Notes
 - **CI mode**: Metro runs in CI mode in automated environments (no hot reloading)
