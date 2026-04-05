@@ -25,6 +25,39 @@ In the output, you'll find options to open the app in a
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
+## Orientation
+
+The game shell is **landscape-only**: `app.json` sets `"orientation": "landscape"`, and the root layout calls `expo-screen-orientation` on native to lock landscape after launch. When you use **web preview** or **Expo Go**, rotate the window or device to **landscape** so thumb zones and layout match how the shell is designed and tested.
+
+## Control templates (A–D)
+
+Generated games should import a single component and pass `controlTemplate` from your planner:
+
+```ts
+import { ControlTemplate } from '@/game/controls';
+```
+
+| ID | Role |
+|----|------|
+| **A** | Left virtual joystick + primary action (right). |
+| **B** | Twin sticks: move + aim / look. |
+| **C** | One stick + tap zone + secondary hold. |
+| **D** | Swipe strip + three lane buttons + primary action. |
+
+Touch handling uses **react-native-gesture-handler** and **react-native-reanimated** only (no mixed gesture stacks). See `src/game/controls/README.md` for callback props and layering notes with `expo-gl` / Three.
+
+Use **`GameShell`** (`@/game/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
+
+### Dependencies (controls & orientation)
+
+- **`expo-screen-orientation`** — runtime landscape lock on iOS/Android (with `app.json` orientation).
+- **`react-native-gesture-handler`** / **`react-native-reanimated`** — virtual sticks and knob motion (already in the template).
+
+## How to test
+
+1. **Dev QA screen (manual)** — Run `npx expo start`, open the app in dev, then use **“Open control template QA (dev)”** on the home screen (or navigate to `/dev-controls`). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+2. **Automated smoke test** — `npm test` runs Jest and mounts template **A** with a `testID` on the joystick.
+
 ## Get a fresh project
 
 When you're ready, run:
