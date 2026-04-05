@@ -1,3 +1,5 @@
+import '@/polyfills/threeImageLoader.native';
+
 import { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { GLView } from 'expo-gl';

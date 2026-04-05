@@ -1,5 +1,6 @@
 import { Asset } from 'expo-asset';
 import * as THREE from 'three';
+import { Cache, LoaderUtils } from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import barrelGlb from '@/assets/harness/barrel.glb';
@@ -34,13 +35,42 @@ export async function loadKenneyColormapUri() {
 export function createKenneyLoadingManager(colormapUri: string) {
   const manager = new THREE.LoadingManager();
   manager.setURLModifier((url) => {
-    if (url.includes('colormap.png')) return colormapUri;
+    const u = url.replace(/\\/g, '/');
+    if (u.includes('colormap.png') || u.includes('Textures/colormap')) {
+      return colormapUri;
+    }
     return url;
   });
   return manager;
 }
 
+/**
+ * Pre-populate THREE.Cache with the colormap at the exact resolved URL each GLB uses for
+ * `Textures/colormap.png`, so ImageLoader/ImageBitmapLoader never hit a missing path on disk.
+ */
+export async function primeKenneyTextureCache() {
+  if (typeof createImageBitmap !== 'function') return;
+
+  const colormapUri = await loadKenneyColormapUri();
+  const res = await fetch(colormapUri);
+  if (!res.ok) return;
+  const blob = await res.blob();
+  const bitmap = await createImageBitmap(blob);
+
+  for (const glb of DEMO_GLBS) {
+    const asset = Asset.fromModule(glb);
+    await asset.downloadAsync();
+    const glbUri = asset.localUri ?? asset.uri;
+    if (!glbUri) continue;
+    const base = LoaderUtils.extractUrlBase(glbUri);
+    const textureUrl = LoaderUtils.resolveURL('Textures/colormap.png', base);
+    Cache.add(textureUrl, bitmap);
+  }
+}
+
 export async function loadKenneyDemoGroup(loader: GLTFLoader) {
+  await primeKenneyTextureCache();
+
   const group = new THREE.Group();
   const spacing = 1.85;
   for (let i = 0; i < DEMO_GLBS.length; i++) {
