@@ -5,8 +5,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { ControlTemplateSwitcher } from '@/game-ui/ControlTemplateSwitcher';
 import { GameShell } from '@/game-ui/GameShell';
 import { TestScene } from '@/game-ui/TestScene';
-import type { ControlTemplateId, Vec2 } from '@/game-ui/controls';
-import { ControlTemplate } from '@/game-ui/controls';
+import type { ControlTemplateId, Vec2 } from '@/game/controls';
+import { ControlTemplate } from '@/game/controls';
 
 export default function DevControlsScreen() {
   const [template, setTemplate] = useState<ControlTemplateId>('A');
