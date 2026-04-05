@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { ControlTemplate } from '@/game-ui/controls';
+import { ControlTemplate } from '@/game/controls';
 
 const safeAreaMetrics = {
   frame: { x: 0, y: 0, width: 844, height: 390 },
