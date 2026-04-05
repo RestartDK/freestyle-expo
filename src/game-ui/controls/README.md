@@ -1,6 +1,6 @@
 # Control templates (A–D)
 
-`ControlTemplate` is the single entry point for AI-generated games. Import from `@/game-ui/controls`.
+`ControlTemplate` is the single entry point for AI-generated games. Import from `@/game/controls`.
 
 ## IDs
 
@@ -26,4 +26,4 @@ Use `GameShell` from `@/game-ui/GameShell`: the GL / `GLView` child gets `pointe
 
 The repo includes **`TestScene`** (`@/game-ui/TestScene`) — a rotating cube on `expo-gl` + Three.js — and wires it on the **dev-only** route **`/dev-controls`** with **`ControlTemplateSwitcher`** (`@/game-ui/ControlTemplateSwitcher`) for **A–D**. The **app root** runs the main R3F `GameScreen`; use **`/dev-controls`** for manual control QA.
 
-**Path note:** `@/game/*` is reserved for the **simulation** modules in the repo root `game/` folder (`constants`, `input`, `state`, `step`). Touch UI lives under **`@/game-ui/*`**.
+**Path note:** generated games should import controls through the public facade **`@/game/controls`**. The touch UI implementation still lives under **`@/game-ui/*`**, while the rest of `@/game/*` holds simulation modules in the repo root `game/` folder (`constants`, `input`, `state`, `step`).

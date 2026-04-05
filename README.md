@@ -4,16 +4,16 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
-1. Install dependencies ([Bun](https://bun.sh))
+1. Install dependencies with npm
 
    ```bash
-   bun install
+   npm install
    ```
 
 2. Start the app
 
    ```bash
-   bunx expo start
+   npx expo start
    ```
 
 In the output, you'll find options to open the app in a
@@ -34,7 +34,7 @@ The game shell is **landscape-only**: `app.json` sets `"orientation": "landscape
 Generated games should import a single component and pass `controlTemplate` from your planner:
 
 ```ts
-import { ControlTemplate } from '@/game-ui/controls';
+import { ControlTemplate } from '@/game/controls';
 ```
 
 | ID | Role |
@@ -57,15 +57,15 @@ Use **`GameShell`** (`@/game-ui/GameShell`) so the GL view sits under a full-scr
 
 ## How to test
 
-1. **Dev QA screen (manual)** — Run `bunx expo start`. In **development** builds, the home screen has a **Control QA** link that navigates to **`/dev-controls`** (you can also open that URL directly). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
-2. **Automated smoke test** — `bun run test` runs Jest and mounts template **A** with a `testID` on the joystick.
+1. **Dev QA screen (manual)** — Run `npx expo start`. In **development** builds, the home screen has a **Control QA** link that navigates to **`/dev-controls`** (you can also open that URL directly). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+2. **Automated smoke test** — `npm test` runs Jest and mounts template **A** with a `testID` on the joystick.
 
 ## Get a fresh project
 
 When you're ready, run:
 
 ```bash
-bun run reset-project
+npm run reset-project
 ```
 
 This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
