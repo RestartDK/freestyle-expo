@@ -1,13 +1,35 @@
 import { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
+import { Asset } from 'expo-asset';
 import { GLView } from 'expo-gl';
 import type { ExpoWebGLRenderingContext } from 'expo-gl';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+import barrelGlb from '@/assets/harness/barrel.glb';
+import blockGrassGlb from '@/assets/harness/block-grass.glb';
+import coinGoldGlb from '@/assets/harness/coin-gold.glb';
+import flagGlb from '@/assets/harness/flag.glb';
 
 /**
- * Minimal rotating cube on `expo-gl` + Three.js — use as the “base object” under touch controls.
+ * Rotating row of Kenney platformer GLBs on `expo-gl` + Three.js — base scene under touch controls.
  * The GL view uses `pointerEvents="none"` when placed inside `GameShell` so overlays keep touches.
  */
+const DEMO_GLBS = [barrelGlb, flagGlb, coinGoldGlb, blockGrassGlb] as const;
+
+function normalizeToHeight(root: THREE.Object3D, targetHeight: number) {
+  const box = new THREE.Box3().setFromObject(root);
+  const size = new THREE.Vector3();
+  box.getSize(size);
+  const maxDim = Math.max(size.x, size.y, size.z, 1e-6);
+  const scale = targetHeight / maxDim;
+  root.scale.setScalar(scale);
+  const box2 = new THREE.Box3().setFromObject(root);
+  const center = new THREE.Vector3();
+  box2.getCenter(center);
+  root.position.sub(center);
+}
+
 export function TestScene() {
   const mountedRef = useRef(true);
   const rafRef = useRef<number | null>(null);
@@ -23,19 +45,20 @@ export function TestScene() {
     };
   }, []);
 
-  const onContextCreate = (gl: ExpoWebGLRenderingContext) => {
+  const onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a12);
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    camera.position.set(0, 0.2, 3.2);
+    camera.position.set(0, 1.2, 4.2);
+    camera.lookAt(0, 0.4, 0);
 
-    const geometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
-    const material = new THREE.MeshNormalMaterial();
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.65));
+    const dir = new THREE.DirectionalLight(0xffffff, 1.15);
+    dir.position.set(4, 8, 5);
+    scene.add(dir);
 
     const canvasStub = {
       width,
@@ -52,12 +75,35 @@ export function TestScene() {
       context: gl as WebGLRenderingContext,
     });
     renderer.setSize(width, height);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const group = new THREE.Group();
+    const loader = new GLTFLoader();
+    const spacing = 1.85;
+
+    try {
+      for (let i = 0; i < DEMO_GLBS.length; i++) {
+        const asset = Asset.fromModule(DEMO_GLBS[i]);
+        await asset.downloadAsync();
+        const uri = asset.localUri ?? asset.uri;
+        if (!uri) continue;
+
+        const gltf = await loader.loadAsync(uri);
+        const clone = gltf.scene.clone(true);
+        normalizeToHeight(clone, 1.1);
+        clone.position.x = (i - (DEMO_GLBS.length - 1) / 2) * spacing;
+        group.add(clone);
+      }
+    } catch (e) {
+      console.error('[TestScene] GLB load failed', e);
+    }
+
+    scene.add(group);
 
     const renderFrame = () => {
       if (!mountedRef.current) return;
       rafRef.current = requestAnimationFrame(renderFrame);
-      cube.rotation.x += 0.012;
-      cube.rotation.y += 0.018;
+      group.rotation.y += 0.008;
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };

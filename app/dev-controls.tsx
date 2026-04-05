@@ -34,7 +34,7 @@ export default function DevControlsScreen() {
       <View style={styles.toolbar}>
         <View style={styles.toolbarTitle}>
           <Text style={styles.toolbarHeading}>Control QA</Text>
-          <Text style={styles.toolbarSub}>TestScene + templates A–D</Text>
+          <Text style={styles.toolbarSub}>Kenney GLBs + templates A–D</Text>
         </View>
         <View style={styles.toolbarSwitcher}>
           <ControlTemplateSwitcher value={template} onChange={setTemplate} />
