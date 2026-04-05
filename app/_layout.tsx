@@ -1,10 +1,10 @@
 /* eslint-disable import/no-duplicates -- side-effect import must run before other imports */
 import 'react-native-gesture-handler';
+import '@/polyfills/gltf-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -18,9 +18,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (Platform.OS === 'web') return;
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE).catch(() => {
-      /* native builds without module / sim edge cases */
-    });
+    void import('expo-screen-orientation')
+      .then((SO) => SO.lockAsync(SO.OrientationLock.LANDSCAPE))
+      .catch(() => {
+        /* native builds without module / sim edge cases */
+      });
   }, []);
 
   return (

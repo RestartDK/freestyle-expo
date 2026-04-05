@@ -1,75 +1,86 @@
-import { useEffect, useRef } from 'react';
-import { StyleSheet } from 'react-native';
-import { GLView } from 'expo-gl';
-import type { ExpoWebGLRenderingContext } from 'expo-gl';
+import { Suspense, useEffect, useRef, type ComponentType } from 'react';
+import { Platform, StyleSheet, View } from 'react-native';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-/**
- * Minimal rotating cube on `expo-gl` + Three.js — use as the “base object” under touch controls.
- * The GL view uses `pointerEvents="none"` when placed inside `GameShell` so overlays keep touches.
- */
-export function TestScene() {
-  const mountedRef = useRef(true);
-  const rafRef = useRef<number | null>(null);
+import { createBaseLoadingManager, loadBaseDemoGroup } from '@/game-ui/testSceneHarness';
+
+type FiberApi = {
+  Canvas: ComponentType<Record<string, unknown>>;
+  useFrame: (callback: (_state: unknown, delta: number) => void) => void;
+};
+
+const fiber = (
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  Platform.OS === 'web' ? require('@react-three/fiber') : require('@react-three/fiber/native')
+) as FiberApi;
+
+const Canvas = fiber.Canvas;
+const useFrame = fiber.useFrame;
+
+function HarnessModels() {
+  const rootRef = useRef<THREE.Group>(null);
 
   useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      if (rafRef.current != null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
+    let cancelled = false;
+
+    void (async () => {
+      try {
+        const loader = new GLTFLoader(createBaseLoadingManager());
+        const group = await loadBaseDemoGroup(loader);
+        if (cancelled || !rootRef.current) return;
+        rootRef.current.clear();
+        rootRef.current.add(group);
+      } catch (error) {
+        console.error('[TestScene] GLB load failed', error);
       }
+    })();
+
+    return () => {
+      cancelled = true;
     };
   }, []);
 
-  const onContextCreate = (gl: ExpoWebGLRenderingContext) => {
-    const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
+  useFrame((_, delta) => {
+    if (rootRef.current) {
+      rootRef.current.rotation.y += delta * 0.48;
+    }
+  });
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a12);
+  return (
+    <>
+      <ambientLight intensity={0.65} color="#ffffff" />
+      <directionalLight position={[4, 8, 5]} intensity={1.15} color="#ffffff" />
+      <group ref={rootRef} />
+    </>
+  );
+}
 
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 100);
-    camera.position.set(0, 0.2, 3.2);
-
-    const geometry = new THREE.BoxGeometry(1.1, 1.1, 1.1);
-    const material = new THREE.MeshNormalMaterial();
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
-
-    const canvasStub = {
-      width,
-      height,
-      style: {},
-      addEventListener: () => {},
-      removeEventListener: () => {},
-      clientHeight: height,
-      clientWidth: width,
-    } as unknown as HTMLCanvasElement;
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvasStub,
-      context: gl as WebGLRenderingContext,
-    });
-    renderer.setSize(width, height);
-
-    const renderFrame = () => {
-      if (!mountedRef.current) return;
-      rafRef.current = requestAnimationFrame(renderFrame);
-      cube.rotation.x += 0.012;
-      cube.rotation.y += 0.018;
-      renderer.render(scene, camera);
-      gl.endFrameEXP();
-    };
-
-    renderFrame();
-  };
-
-  return <GLView style={styles.gl} onContextCreate={onContextCreate} />;
+/** Single Expo scene implementation for native and web. */
+export function TestScene() {
+  return (
+    <View style={styles.root}>
+      <Suspense fallback={null}>
+        <Canvas
+          style={styles.canvas}
+          camera={{ position: [0, 1.2, 4.2], fov: 50, near: 0.1, far: 100 }}
+          onCreated={({ scene, gl }: { scene: THREE.Scene; gl: THREE.WebGLRenderer }) => {
+            scene.background = new THREE.Color(0x0a0a12);
+            gl.outputColorSpace = THREE.SRGBColorSpace;
+          }}
+        >
+          <HarnessModels />
+        </Canvas>
+      </Suspense>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  gl: {
+  root: {
+    flex: 1,
+  },
+  canvas: {
     flex: 1,
   },
 });
