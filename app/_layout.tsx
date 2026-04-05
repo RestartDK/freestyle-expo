@@ -1,5 +1,6 @@
 /* eslint-disable import/no-duplicates -- side-effect import must run before other imports */
 import 'react-native-gesture-handler';
+import '@/polyfills/gltf-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { Stack } from 'expo-router';
