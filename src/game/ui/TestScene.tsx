@@ -1,5 +1,6 @@
 import { Suspense, useEffect, useRef, type ComponentType } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
+import type {} from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 

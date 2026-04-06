@@ -53,9 +53,13 @@ Touch handling uses **react-native-gesture-handler** and **react-native-reanimat
 
 Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) shows the main **`GameScreen`** (R3F) and, in **`__DEV__`**, a **Control QA** link to **`/dev-controls`**; the **full control-template demo** (TestScene + switcher + Metro logging) lives on **`/dev-controls`** (`src/app/dev-controls.tsx`, `__DEV__` only).
+**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** for manual QA only. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) renders **`@/game/Game`**, the single playable game entry; in **`__DEV__`**, a **Control QA** link opens **`/dev-controls`**, where the full template demo (TestScene + switcher + Metro logging) lives.
 
-**Game code layout:** Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, test scene, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
+**Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, test scene, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
+
+## GLTF / Expo GL note
+
+On native Expo builds, textured GLBs may log warnings such as `EXGL: gl.pixelStorei() doesn't support this parameter yet!`. That warning usually comes from Three texture upload paths and is often non-fatal, but it is noisy and can hide real asset issues. The default starter game therefore uses simple geometry instead of textured GLBs. Keep GLTF experiments in dedicated game code or the dev harness until you have verified they render correctly on device.
 
 ### Dependencies (controls & orientation)
 
@@ -90,4 +94,3 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-

@@ -2,18 +2,18 @@ import { Link } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { GameScreen } from '@/components/game/GameScreen';
+import { Game } from '@/game/Game';
 
 /**
- * Main game shell from `main` (R3F `GameScreen`). In __DEV__, a footer link opens
- * `/dev-controls` for touch-template QA (`TestScene` + `ControlTemplate`).
+ * Main playable game. In __DEV__, a footer link opens `/dev-controls` for
+ * touch-template QA (`TestScene` + `ControlTemplate`).
  */
 export default function Index() {
   const insets = useSafeAreaInsets();
 
   return (
     <View style={styles.root}>
-      <GameScreen />
+      <Game />
       {__DEV__ ? (
         <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]} pointerEvents="box-none">
           <Link href="/dev-controls" style={styles.devLink}>
