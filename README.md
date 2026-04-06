@@ -53,7 +53,7 @@ Touch handling uses **react-native-gesture-handler** and **react-native-reanimat
 
 Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** for manual QA only. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) renders **`@/game/Game`**, the single playable game entry; in **`__DEV__`**, a **Control QA** link opens **`/dev-controls`**, where the full template demo (TestScene + switcher + Metro logging) lives.
+**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** for manual QA only. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) renders **`@/game/Game`**, the single playable game entry. The dev-only route **`/dev-controls`** remains available for manual QA but is intentionally not linked from the main UI.
 
 **Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, test scene, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
 
@@ -68,7 +68,7 @@ On native Expo builds, textured GLBs may log warnings such as `EXGL: gl.pixelSto
 
 ## How to test
 
-1. **Dev QA screen (manual)** — Run `npx expo start`. In **development** builds, the home screen has a **Control QA** link that navigates to **`/dev-controls`** (you can also open that URL directly). Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+1. **Dev QA screen (manual)** — Run `npx expo start`, then open **`/dev-controls`** directly in development. Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
 2. **Automated smoke test** — `npm test` runs Jest and mounts template **A** with a `testID` on the joystick.
 
 ## Get a fresh project
