@@ -102,7 +102,7 @@ dist/
 │   │   ├── index.tsx        # Home / game screen
 │   │   ├── dev-controls.tsx # Dev-only control QA (when present)
 │   │   └── +not-found.tsx   # 404
-│   ├── components/          # Reusable UI (ThemedText, ThemedView, game/…)
+│   ├── components/          # Reusable UI (ThemedText, ThemedView, …)
 │   ├── hooks/               # useColorScheme, useThemeColor, …
 │   ├── constants/           # e.g. Colors.ts
 │   ├── polyfills/           # e.g. gltf-react-native
@@ -138,7 +138,7 @@ dist/
 
 ### Working with Components
 - **Themed components**: Use `ThemedText` and `ThemedView` for consistent theming
-- **Game / R3F**: `src/components/game/` (e.g. `GameScreen`, `Scene`)
+- **Game / R3F**: `src/game/` for the playable runtime, `src/game/ui/` for overlays and dev harnesses
 
 ### Styling Guidelines
 - Use StyleSheet.create() for component styles
