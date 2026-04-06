@@ -3,7 +3,7 @@ import { Platform, StyleSheet, View } from 'react-native';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { createBaseLoadingManager, loadBaseDemoGroup } from '@/game-ui/testSceneHarness';
+import { createBaseLoadingManager, loadBaseDemoGroup } from './testSceneHarness';
 
 type FiberApi = {
   Canvas: ComponentType<Record<string, unknown>>;
