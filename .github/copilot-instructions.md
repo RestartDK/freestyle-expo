@@ -64,11 +64,9 @@ npx expo export --platform web --no-minify
 ### Manual Validation Requirements
 After making changes, ALWAYS perform these validation steps:
 
-1. **Start the web development server** and verify it loads without errors
-2. **Test navigation** by clicking between Home and Explore tabs
-3. **Verify content rendering** on both pages:
-   - Home page should show welcome message with steps
-   - Explore page should show feature list with expandable items
+1. **Start the web development server** and verify it loads without errors (landscape shell)
+2. **Test navigation** to `/dev-controls` in development if you changed controls or TestScene
+3. **Verify** the main screen and any edited routes render as expected
 4. **Check console** for any JavaScript errors or warnings
 5. **Test responsive behavior** if making UI changes
 
@@ -98,33 +96,27 @@ dist/
 ### Key Directories
 ```
 /
-├── app/                 # File-based routing (Expo Router)
-│   ├── (tabs)/         # Tab navigation layout
-│   │   ├── index.tsx   # Home screen
-│   │   ├── explore.tsx # Explore screen
-│   │   └── _layout.tsx # Tab layout configuration
-│   ├── _layout.tsx     # Root layout with theming
-│   └── +not-found.tsx  # 404 page
-├── components/          # Reusable UI components
-│   ├── ui/             # Platform-specific UI components
-│   ├── ThemedText.tsx  # Text with theme support
-│   ├── ThemedView.tsx  # View with theme support
-│   └── ParallaxScrollView.tsx # Advanced scroll component
-├── hooks/              # Custom React hooks
-│   ├── useColorScheme.ts    # Light/dark mode detection
-│   └── useThemeColor.ts     # Theme color management
-├── constants/          # App configuration
-│   └── Colors.ts       # Theme color definitions
-├── assets/             # Static assets (images, fonts)
-└── scripts/            # Build and utility scripts
-    └── reset-project.js # Project reset utility
+├── src/
+│   ├── app/                 # File-based routing (Expo Router)
+│   │   ├── _layout.tsx      # Root layout
+│   │   ├── index.tsx        # Home / game screen
+│   │   ├── dev-controls.tsx # Dev-only control QA (when present)
+│   │   └── +not-found.tsx   # 404
+│   ├── components/          # Reusable UI (ThemedText, ThemedView, game/…)
+│   ├── hooks/               # useColorScheme, useThemeColor, …
+│   ├── constants/           # e.g. Colors.ts
+│   ├── polyfills/           # e.g. gltf-react-native
+│   └── game/                # Simulation, controls, GameShell, TestScene, …
+├── assets/                  # Root assets (app.json icons/splash; harness GLBs — use @/assets/*)
+└── scripts/
+    └── reset-project.js     # Moves src/app + shared dirs to app-example; recreates blank src/app
 ```
 
 ### Navigation System
-- Uses **Expo Router** for file-based routing
-- Tab navigation with Home and Explore screens
+- Uses **Expo Router** for file-based routing under **`src/app/`**
+- Routes include `/`, `/dev-controls` (dev QA), `+not-found`
 - Automatic deep linking support
-- Type-safe navigation with TypeScript
+- Type-safe navigation with TypeScript (`experiments.typedRoutes` in app.json)
 
 ### Theming System
 - Light and dark mode support
@@ -135,24 +127,22 @@ dist/
 ## Common Tasks
 
 ### Adding New Screens
-1. Create new `.tsx` file in `app/` directory
+1. Create a new `.tsx` file under `src/app/`
 2. Export default React component
 3. Navigation will be automatically configured based on file structure
 
 ### Modifying Existing Screens
-- **Home screen**: Edit `app/(tabs)/index.tsx`
-- **Explore screen**: Edit `app/(tabs)/explore.tsx`
-- **Tab layout**: Edit `app/(tabs)/_layout.tsx`
-- **Root layout**: Edit `app/_layout.tsx`
+- **Home / game**: Edit `src/app/index.tsx`
+- **Dev controls QA**: Edit `src/app/dev-controls.tsx`
+- **Root layout**: Edit `src/app/_layout.tsx` (polyfills, theme, splash)
 
 ### Working with Components
 - **Themed components**: Use `ThemedText` and `ThemedView` for consistent theming
-- **Platform-specific**: Check `components/ui/` for iOS/Android specific implementations
-- **Icons**: Use `IconSymbol` component for SF Symbols (iOS) and equivalent icons
+- **Game / R3F**: `src/components/game/` (e.g. `GameScreen`, `Scene`)
 
 ### Styling Guidelines
 - Use StyleSheet.create() for component styles
-- Follow existing color scheme from `constants/Colors.ts`
+- Follow existing color scheme from `src/constants/Colors.ts`
 - Test both light and dark themes
 - Ensure cross-platform compatibility
 
@@ -165,7 +155,7 @@ dist/
 - **eslint.config.js**: Code linting rules
 
 ### Project Reset
-Run `npm run reset-project` to move current app to `app-example/` and create blank app structure.
+Run `npm run reset-project` to move `src/app`, `src/components`, `src/hooks`, `src/constants`, and `scripts` to `app-example/` and create a blank `src/app/` tree.
 
 ## Troubleshooting
 

@@ -3,7 +3,7 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
   moduleNameMapper: {
-    '^@/game/(.*)$': '<rootDir>/src/game/$1',
-    '^@/(.*)$': '<rootDir>/$1',
+    '^@/assets/(.*)$': '<rootDir>/assets/$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
 };

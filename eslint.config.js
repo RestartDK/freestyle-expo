@@ -15,7 +15,7 @@ module.exports = defineConfig([
     },
   },
   {
-    files: ['components/game/Scene*.tsx', 'src/game/ui/TestScene.tsx'],
+    files: ['src/components/game/Scene*.tsx', 'src/game/ui/TestScene.tsx'],
     rules: {
       // R3F JSX uses Three.js props, not DOM attributes; the official R3F plugin does not replace this rule.
       'react/no-unknown-property': 'off',

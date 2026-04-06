@@ -1,6 +1,6 @@
 # Game simulation
 
-**Flow:** React Three Fiber runs the render loop. `components/game/Scene.tsx` uses `useFrame` once per frame, clamps `delta`, then calls `step` from this folder.
+**Flow:** React Three Fiber runs the render loop. `src/components/game/Scene.tsx` uses `useFrame` once per frame, clamps `delta`, then calls `step` from this folder.
 
 - **`state.ts`** — `GameState` + `createInitialState()`. Extend with player, NPCs, flags, etc.
 - **`step.ts`** — `step(state, dt, input)` — all per-frame simulation (movement, physics you add later). Keep Three.js scene wiring in `Scene` or small view components.

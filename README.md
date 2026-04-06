@@ -20,7 +20,13 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+You can start developing by editing files under **`src/app/`**. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+### Where routes live vs other code
+
+Expo Router expects your **route tree** in an `app` directory. Per the [Expo Router `src` directory reference](https://docs.expo.dev/router/reference/src-directory/), that can be **`app/`** at the **project root** or **`src/app/`**; **if both exist, `src/app/` wins** and root `app/` is ignored. Non-route code (components, hooks, game logic) should stay **outside** that folder—see [Core concepts](https://docs.expo.dev/router/basics/core-concepts/).
+
+This repo follows the **SDK 55-style layout**: routes in **`src/app/`**, shared UI in **`src/components/`**, **`src/hooks/`**, **`src/constants/`**, and game code in **`src/game/`**. Bundled images referenced from `app.json` stay in root **`assets/`**; the `@/assets/*` alias points there (see `tsconfig.json`).
 
 ## Orientation
 
@@ -47,7 +53,7 @@ Touch handling uses **react-native-gesture-handler** and **react-native-reanimat
 
 Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`app/index.tsx`) shows the main **`GameScreen`** (R3F) and, in **`__DEV__`**, a **Control QA** link to **`/dev-controls`**; the **full control-template demo** (TestScene + switcher + Metro logging) lives on **`/dev-controls`** (`app/dev-controls.tsx`, `__DEV__` only).
+**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** as a default “base object” for manual QA. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) shows the main **`GameScreen`** (R3F) and, in **`__DEV__`**, a **Control QA** link to **`/dev-controls`**; the **full control-template demo** (TestScene + switcher + Metro logging) lives on **`/dev-controls`** (`src/app/dev-controls.tsx`, `__DEV__` only).
 
 **Game code layout:** Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, test scene, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
 
@@ -69,7 +75,7 @@ When you're ready, run:
 npm run reset-project
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This command will move the starter code to the **app-example** directory and create a blank **`src/app`** tree where you can start developing.
 
 ## Learn more
 

@@ -2,7 +2,8 @@
 
 /**
  * This script is used to reset the project to a blank state.
- * It deletes or moves the /app, /components, /hooks, /scripts, and /constants directories to /app-example based on user input and creates a new /app directory with an index.tsx and _layout.tsx file.
+ * It deletes or moves src/app, src/components, src/hooks, src/constants, and scripts
+ * to /app-example based on user input and creates a new src/app directory with index.tsx and _layout.tsx.
  * You can remove the `reset-project` script from package.json and safely delete this file after running it.
  */
 
@@ -11,9 +12,16 @@ const path = require("path");
 const readline = require("readline");
 
 const root = process.cwd();
-const oldDirs = ["app", "components", "hooks", "constants", "scripts"];
+/** Paths relative to project root; each becomes app-example/<destName> when archived. */
+const oldDirs = [
+  { src: "src/app", destName: "app" },
+  { src: "src/components", destName: "components" },
+  { src: "src/hooks", destName: "hooks" },
+  { src: "src/constants", destName: "constants" },
+  { src: "scripts", destName: "scripts" },
+];
 const exampleDir = "app-example";
-const newAppDir = "app";
+const newAppDir = path.join("src", "app");
 const exampleDirPath = path.join(root, exampleDir);
 
 const indexContent = `import { Text, View } from "react-native";
@@ -27,7 +35,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      <Text>Edit src/app/index.tsx to edit this screen.</Text>
     </View>
   );
 }
@@ -48,46 +56,41 @@ const rl = readline.createInterface({
 const moveDirectories = async (userInput) => {
   try {
     if (userInput === "y") {
-      // Create the app-example directory
       await fs.promises.mkdir(exampleDirPath, { recursive: true });
       console.log(`📁 /${exampleDir} directory created.`);
     }
 
-    // Move old directories to new app-example directory or delete them
-    for (const dir of oldDirs) {
-      const oldDirPath = path.join(root, dir);
+    for (const { src, destName } of oldDirs) {
+      const oldDirPath = path.join(root, src);
       if (fs.existsSync(oldDirPath)) {
         if (userInput === "y") {
-          const newDirPath = path.join(root, exampleDir, dir);
+          const newDirPath = path.join(exampleDirPath, destName);
           await fs.promises.rename(oldDirPath, newDirPath);
-          console.log(`➡️ /${dir} moved to /${exampleDir}/${dir}.`);
+          console.log(`➡️ /${src} moved to /${exampleDir}/${destName}.`);
         } else {
           await fs.promises.rm(oldDirPath, { recursive: true, force: true });
-          console.log(`❌ /${dir} deleted.`);
+          console.log(`❌ /${src} deleted.`);
         }
       } else {
-        console.log(`➡️ /${dir} does not exist, skipping.`);
+        console.log(`➡️ /${src} does not exist, skipping.`);
       }
     }
 
-    // Create new /app directory
     const newAppDirPath = path.join(root, newAppDir);
     await fs.promises.mkdir(newAppDirPath, { recursive: true });
-    console.log("\n📁 New /app directory created.");
+    console.log(`\n📁 New /${newAppDir} directory created.`);
 
-    // Create index.tsx
     const indexPath = path.join(newAppDirPath, "index.tsx");
     await fs.promises.writeFile(indexPath, indexContent);
-    console.log("📄 app/index.tsx created.");
+    console.log(`📄 ${newAppDir}/index.tsx created.`);
 
-    // Create _layout.tsx
     const layoutPath = path.join(newAppDirPath, "_layout.tsx");
     await fs.promises.writeFile(layoutPath, layoutContent);
-    console.log("📄 app/_layout.tsx created.");
+    console.log(`📄 ${newAppDir}/_layout.tsx created.`);
 
     console.log("\n✅ Project reset complete. Next steps:");
     console.log(
-      `1. Run \`npx expo start\` to start a development server.\n2. Edit app/index.tsx to edit the main screen.${
+      `1. Run \`npx expo start\` to start a development server.\n2. Edit ${newAppDir}/index.tsx to edit the main screen.${
         userInput === "y"
           ? `\n3. Delete the /${exampleDir} directory when you're done referencing it.`
           : ""
