@@ -7,4 +7,8 @@
 - **`input.ts`** — `getInput()` / `InputSnapshot`. Centralize keyboard, touch, and gamepad here so gameplay code stays testable.
 - **`constants.ts`** — e.g. `MAX_DELTA_SECONDS` to cap `dt` when a frame stalls.
 
+**UI / controls:** Touch templates and `GameShell` live under **`ui/`**. Import the public facade from **`@/game/controls`**.
+
+**Generated plans:** The build pipeline (`src/game/generated/`) may add `game-plan.ts` and `asset-manifest.ts` — keep imports stable via `@/game/generated/...`.
+
 Do **not** start a second `requestAnimationFrame` or `setInterval` game loop; use `useFrame` (or a single delegate it calls) so there is one clock.
