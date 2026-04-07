@@ -16,7 +16,7 @@ export const glb = {
 
 export type GlbKey = keyof typeof glb;
 
-/** Models shown in order by the harness / TestScene demo row. */
+/** Models shown in order by the harness / CanvasScene demo row. */
 export const HARNESS_DEMO_KEYS = [
   'barrel',
   'flag',

@@ -53,9 +53,9 @@ Touch handling uses **react-native-gesture-handler** and **react-native-reanimat
 
 Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`TestScene`** (`@/game/ui/TestScene`) renders a minimal **Three.js** scene on **`expo-gl`** for manual QA only. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D**. The **root route** (`src/app/index.tsx`) renders **`@/game/Game`**, the single playable game entry. The dev-only route **`/dev-controls`** remains available for manual QA but is intentionally not linked from the main UI.
+**`CanvasScene`** (`@/game/ui/CanvasScene`) is an optional **expo-gl** + **Three.js** harness that loads bundled GLBs from **`glbRegistry`** (not mounted on the root route). Use it when you need a minimal r3f scene without the full game. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) is available if you mount templates **A–D** in your own screen. The **root route** (`src/app/index.tsx`) renders only **`@/game/Game`** — there is no separate dev QA route.
 
-**Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, test scene, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
+**Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, `CanvasScene`, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
 
 ## GLTF / Expo GL note
 
@@ -68,7 +68,7 @@ On native Expo builds, textured GLBs may log warnings such as `EXGL: gl.pixelSto
 
 ## How to test
 
-1. **Dev QA screen (manual)** — Run `npx expo start`, then open **`/dev-controls`** directly in development. Pick **A–D** and watch Metro logs: stub handlers `console.log` move, actions, swipe, and lane taps.
+1. **Playable game** — Run `npx expo start` and open the app; the root route is **`Game`**. To try **`CanvasScene`** or **`ControlTemplateSwitcher`**, import them into a temporary route or screen during development (they are not registered by default).
 2. **Automated smoke test** — `npm test` runs Jest and mounts template **A** with a `testID` on the joystick.
 
 ## Get a fresh project

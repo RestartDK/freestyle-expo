@@ -31,7 +31,6 @@ export default function RootLayout() {
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
           <Stack>
             <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="dev-controls" options={{ title: 'Control QA (dev)' }} />
             <Stack.Screen name="+not-found" />
           </Stack>
           <StatusBar style="light" />
