@@ -1,13 +1,8 @@
-import { Asset } from 'expo-asset';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import barrelGlb from '@/assets/harness/barrel.glb';
-import blockGrassGlb from '@/assets/harness/block-grass.glb';
-import coinGoldGlb from '@/assets/harness/coin-gold.glb';
-import flagGlb from '@/assets/harness/flag.glb';
-
-export const DEMO_GLBS = [barrelGlb, flagGlb, coinGoldGlb, blockGrassGlb] as const;
+import { HARNESS_DEMO_KEYS, glb } from '@/game/assets/glbRegistry';
+import { loadGltfFromBundledModule } from '@/game/assets/loadGltf';
 
 const BASE_COLORMAP_SIZE = 16;
 const BASE_COLORMAP_ROWS = [
@@ -108,15 +103,13 @@ export function createBaseLoadingManager() {
 export async function loadBaseDemoGroup(loader: GLTFLoader) {
   const group = new THREE.Group();
   const spacing = 1.85;
-  for (let i = 0; i < DEMO_GLBS.length; i++) {
-    const asset = Asset.fromModule(DEMO_GLBS[i]);
-    await asset.downloadAsync();
-    const uri = asset.localUri ?? asset.uri;
-    if (!uri) continue;
-    const gltf = await loader.loadAsync(uri);
+  const keys = HARNESS_DEMO_KEYS;
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const gltf = await loadGltfFromBundledModule(loader, glb[key]);
     const clone = gltf.scene.clone(true);
     normalizeToHeight(clone, 1.1);
-    clone.position.x = (i - (DEMO_GLBS.length - 1) / 2) * spacing;
+    clone.position.x = (i - (keys.length - 1) / 2) * spacing;
     group.add(clone);
   }
   return group;

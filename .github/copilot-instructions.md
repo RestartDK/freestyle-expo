@@ -65,7 +65,7 @@ npx expo export --platform web --no-minify
 After making changes, ALWAYS perform these validation steps:
 
 1. **Start the web development server** and verify it loads without errors (landscape shell)
-2. **Test navigation** to `/dev-controls` in development if you changed controls or TestScene
+2. **If you changed controls or `CanvasScene`**, verify gestures and any screen where you mounted them
 3. **Verify** the main screen and any edited routes render as expected
 4. **Check console** for any JavaScript errors or warnings
 5. **Test responsive behavior** if making UI changes
@@ -100,13 +100,12 @@ dist/
 │   ├── app/                 # File-based routing (Expo Router)
 │   │   ├── _layout.tsx      # Root layout
 │   │   ├── index.tsx        # Home / game screen
-│   │   ├── dev-controls.tsx # Dev-only control QA (when present)
 │   │   └── +not-found.tsx   # 404
 │   ├── components/          # Reusable UI (ThemedText, ThemedView, …)
 │   ├── hooks/               # useColorScheme, useThemeColor, …
 │   ├── constants/           # e.g. Colors.ts
 │   ├── polyfills/           # e.g. gltf-react-native
-│   └── game/                # Simulation, controls, GameShell, TestScene, …
+│   └── game/                # Simulation, controls, GameShell, CanvasScene, …
 ├── assets/                  # Root assets (app.json icons/splash; harness GLBs — use @/assets/*)
 └── scripts/
     └── reset-project.js     # Moves src/app + shared dirs to app-example; recreates blank src/app
@@ -114,7 +113,7 @@ dist/
 
 ### Navigation System
 - Uses **Expo Router** for file-based routing under **`src/app/`**
-- Routes include `/`, `/dev-controls` (dev QA), `+not-found`
+- Routes include `/`, `+not-found`
 - Automatic deep linking support
 - Type-safe navigation with TypeScript (`experiments.typedRoutes` in app.json)
 
@@ -133,7 +132,6 @@ dist/
 
 ### Modifying Existing Screens
 - **Home / game**: Edit `src/app/index.tsx`
-- **Dev controls QA**: Edit `src/app/dev-controls.tsx`
 - **Root layout**: Edit `src/app/_layout.tsx` (polyfills, theme, splash)
 
 ### Working with Components

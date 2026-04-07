@@ -24,6 +24,6 @@
 
 Use **`GameShell`** from **`@/game/ui/GameShell`**: the GL / `GLView` child gets `pointerEvents="none"`; controls render in a sibling overlay with `pointerEvents="box-none"` on the wrapper and interactive children handling touches.
 
-The repo includes **`TestScene`** (`@/game/ui/TestScene`) — a rotating cube on `expo-gl` + Three.js — wired on the dev-only route **`/dev-controls`** with **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) for **A–D**.
+Optional: **`CanvasScene`** (`@/game/ui/CanvasScene`) — bundled harness GLBs on `expo-gl` + Three.js — is not mounted on the root route; import it in a scratch screen if you need a minimal GLB viewer. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) switches templates **A–D** when you wire it yourself.
 
 **Layout:** All game code for this template lives under **`src/game/`** — simulation modules at the root of that folder, React UI under **`src/game/ui/`**.

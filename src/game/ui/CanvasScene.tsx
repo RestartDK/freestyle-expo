@@ -4,7 +4,7 @@ import type {} from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { createBaseLoadingManager, loadBaseDemoGroup } from './testSceneHarness';
+import { createBaseLoadingManager, loadBaseDemoGroup } from './sceneHarness';
 
 type FiberApi = {
   Canvas: ComponentType<Record<string, unknown>>;
@@ -33,7 +33,7 @@ function HarnessModels() {
         rootRef.current.clear();
         rootRef.current.add(group);
       } catch (error) {
-        console.error('[TestScene] GLB load failed', error);
+        console.error('[CanvasScene] GLB load failed', error);
       }
     })();
 
@@ -57,8 +57,8 @@ function HarnessModels() {
   );
 }
 
-/** Single Expo scene implementation for native and web. */
-export function TestScene() {
+/** Minimal expo-gl + r3f scene: bundled harness GLBs (optional; not used by the main game route). */
+export function CanvasScene() {
   return (
     <View style={styles.root}>
       <Suspense fallback={null}>
