@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 
 import type { ControlTemplateProps } from './types';
-import { TemplateA, TemplateB, TemplateC, TemplateD } from './templates';
+import { TemplateA, TemplateB } from './templates';
 
 /**
  * Switchable on-screen controls for landscape games. Renders in a full-screen layer
@@ -15,8 +15,6 @@ export function ControlTemplate(props: ControlTemplateProps) {
     <View style={styles.layer} pointerEvents="box-none">
       {template === 'A' && <TemplateA {...props} />}
       {template === 'B' && <TemplateB {...props} />}
-      {template === 'C' && <TemplateC {...props} />}
-      {template === 'D' && <TemplateD {...props} />}
     </View>
   );
 }

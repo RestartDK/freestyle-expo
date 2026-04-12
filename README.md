@@ -32,7 +32,7 @@ This repo follows the **SDK 55-style layout**: routes in **`src/app/`**, shared 
 
 The game shell is **landscape-only**: `app.json` sets `"orientation": "landscape"`, and the root layout calls `expo-screen-orientation` on native to lock landscape after launch. When you use **web preview** or **Expo Go**, rotate the window or device to **landscape** so thumb zones and layout match how the shell is designed and tested.
 
-## Control templates (A–D)
+## Control templates (A and B)
 
 Generated games should import a single component and pass `controlTemplate` from your planner:
 
@@ -44,16 +44,14 @@ import { ControlTemplate } from '@/game/controls';
 | ID    | Role                                               |
 | ----- | -------------------------------------------------- |
 | **A** | Left virtual joystick + primary action (right).    |
-| **B** | Twin sticks: move + aim / look.                    |
-| **C** | One stick + tap zone + secondary hold.             |
-| **D** | Swipe strip + three lane buttons + primary action. |
+| **B** | Swipe strip + three lane buttons + primary action. |
 
 
 Touch handling uses **react-native-gesture-handler** and **react-native-reanimated** only (no mixed gesture stacks). See `src/game/ui/controls/README.md` for callback props and layering notes with `expo-gl` / Three.
 
 Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-screen overlay: the scene uses `pointerEvents="none"`; controls use `pointerEvents="box-none"` so touches hit sticks and buttons without passing through to the canvas.
 
-**`CanvasScene`** (`@/game/ui/CanvasScene`) is an optional **expo-gl** + **Three.js** harness that loads bundled GLBs from **`glbRegistry`** (not mounted on the root route). Use it when you need a minimal r3f scene without the full game. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) is available if you mount templates **A–D** in your own screen. The **root route** (`src/app/index.tsx`) renders only **`@/game/Game`** — there is no separate dev QA route.
+**`CanvasScene`** (`@/game/ui/CanvasScene`) is an optional **expo-gl** + **Three.js** harness that loads bundled GLBs from **`glbRegistry`** (not mounted on the root route). Use it when you need a minimal r3f scene without the full game. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) is available if you mount templates **A or B** in your own screen. The **root route** (`src/app/index.tsx`) renders only **`@/game/Game`** — there is no separate dev QA route.
 
 **Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, `CanvasScene`, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`, `loadGeneratedGlb.ts`).
 

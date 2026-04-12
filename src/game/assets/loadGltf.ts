@@ -4,8 +4,9 @@ import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 /**
  * Loads a GLB that was bundled by Metro via `import x from '.../*.glb'` or
  * `require('.../*.glb')` (module id = number).
- * Use only with Metro-bundled module ids such as `glbRegistry` entries or
- * `generatedAssetModules[assetId].module` — never pass string paths or URLs.
+ * Use only with Metro-bundled module ids such as `glbRegistry` entries.
+ * Generated GLBs should go through `src/game/generated/loadGeneratedGlb.ts`,
+ * which materializes embedded base64 assets into local files first.
  */
 export async function loadGltfFromBundledModule(
   loader: GLTFLoader,

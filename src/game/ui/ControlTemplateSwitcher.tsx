@@ -2,7 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import type { ControlTemplateId } from './controls/types';
 
-const ORDER: ControlTemplateId[] = ['A', 'B', 'C', 'D'];
+const ORDER: ControlTemplateId[] = ['A', 'B'];
 
 type ControlTemplateSwitcherProps = {
   value: ControlTemplateId;
@@ -11,7 +11,7 @@ type ControlTemplateSwitcherProps = {
   showLabel?: boolean;
 };
 
-/** Compact A–D picker for switching `ControlTemplate` while testing. */
+/** Compact A / B picker for switching `ControlTemplate` while testing. */
 export function ControlTemplateSwitcher({ value, onChange, showLabel = true }: ControlTemplateSwitcherProps) {
   return (
     <View style={styles.wrap}>
