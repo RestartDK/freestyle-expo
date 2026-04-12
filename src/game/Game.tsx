@@ -1,7 +1,8 @@
-import { Suspense, useMemo, useRef, useState, type ComponentType } from 'react';
+import { Suspense, useEffect, useMemo, useRef, useState, type ComponentType } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import type {} from '@react-three/fiber';
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { MAX_DELTA_SECONDS } from '@/game/constants';
 import { ControlTemplate, type Vec2 } from '@/game/controls';
@@ -9,6 +10,7 @@ import type { InputSnapshot } from '@/game/input';
 import { createInitialState } from '@/game/state';
 import { step } from '@/game/step';
 import { GameShell } from '@/game/ui/GameShell';
+import { loadBaseDemoGroup } from '@/game/ui/sceneHarness';
 
 type FiberApi = {
   Canvas: ComponentType<Record<string, unknown>>;
@@ -38,6 +40,33 @@ const CAMERA_LOOK_OFFSET = new THREE.Vector3(0, 0.2, -1.5);
 const vCameraTarget = new THREE.Vector3();
 const vDesiredPosition = new THREE.Vector3();
 const vLookAt = new THREE.Vector3();
+
+/** Bundled harness GLBs (`@/assets/harness/*`) for visual testing in the main scene. */
+function HarnessGltfRow() {
+  const rootRef = useRef<THREE.Group>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      try {
+        const loader = new GLTFLoader();
+        const group = await loadBaseDemoGroup(loader);
+        if (cancelled || !rootRef.current) return;
+        rootRef.current.clear();
+        rootRef.current.add(group);
+      } catch (error) {
+        console.error('[Game] harness GLB load failed', error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <group ref={rootRef} position={[-4.2, 0.45, -1.2]} />;
+}
 
 function RuntimeScene({ input, onCollectedCountChange }: RuntimeSceneProps) {
   const stateRef = useRef(createInitialState());
@@ -108,6 +137,8 @@ function RuntimeScene({ input, onCollectedCountChange }: RuntimeSceneProps) {
       <directionalLight position={[4, 8, 5]} intensity={1.45} color="#fff4cc" />
       <hemisphereLight intensity={0.55} groundColor="#0b3d2e" color="#5ec8ff" />
 
+      <HarnessGltfRow />
+
       <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <circleGeometry args={[6.3, 48]} />
         <meshStandardMaterial color="#153a2c" />
@@ -170,10 +201,6 @@ export function Game() {
       overlay={
         <>
           <View style={styles.hud} pointerEvents="none">
-            <Text style={styles.title}>Beacon Run</Text>
-            <Text style={styles.subtitle}>
-              Use the joystick to move and hold A near a beacon to collect it.
-            </Text>
             <Text style={styles.counter}>
               {collectedCount === totalBeacons
                 ? 'All beacons collected'
@@ -193,18 +220,6 @@ const styles = StyleSheet.create({
     top: 18,
     left: 18,
     right: 18,
-    gap: 4,
-  },
-  title: {
-    color: '#f8fafc',
-    fontSize: 24,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: 'rgba(248,250,252,0.78)',
-    fontSize: 14,
-    fontWeight: '500',
-    maxWidth: 460,
   },
   counter: {
     color: '#8ee6ff',

@@ -4,7 +4,7 @@ import type {} from '@react-three/fiber';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { createBaseLoadingManager, loadBaseDemoGroup } from './sceneHarness';
+import { loadBaseDemoGroup } from './sceneHarness';
 
 type FiberApi = {
   Canvas: ComponentType<Record<string, unknown>>;
@@ -27,7 +27,7 @@ function HarnessModels() {
 
     void (async () => {
       try {
-        const loader = new GLTFLoader(createBaseLoadingManager());
+        const loader = new GLTFLoader();
         const group = await loadBaseDemoGroup(loader);
         if (cancelled || !rootRef.current) return;
         rootRef.current.clear();
