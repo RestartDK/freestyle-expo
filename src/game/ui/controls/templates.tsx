@@ -41,55 +41,14 @@ export function TemplateA({ onMove, onPrimaryAction }: ControlTemplateProps) {
   );
 }
 
-export function TemplateB({ onMove, onMoveSecondary }: ControlTemplateProps) {
-  const insets = useSafeAreaInsets();
-  return (
-    <View
-      style={[
-        styles.row,
-        { paddingBottom: Math.max(insets.bottom, 12), paddingHorizontal: Math.max(insets.left, insets.right, 8) },
-      ]}
-    >
-      <VirtualJoystick side="left" onChange={(v) => onMove?.(v)} />
-      <View style={styles.spacer} />
-      <VirtualJoystick testID="control-template-b-aim" side="right" onChange={(v) => onMoveSecondary?.(v)} />
-    </View>
-  );
-}
-
-export function TemplateC({ onMove, onTap, onSecondaryAction }: ControlTemplateProps) {
-  const insets = useSafeAreaInsets();
-  return (
-    <View
-      style={[
-        styles.row,
-        { paddingBottom: Math.max(insets.bottom, 12), paddingHorizontal: Math.max(insets.left, insets.right, 8) },
-      ]}
-    >
-      <VirtualJoystick side="left" onChange={(v) => onMove?.(v)} />
-      <View style={styles.spacer} />
-      <View style={styles.cRight}>
-        <Pressable
-          testID="control-template-c-tap"
-          style={({ pressed }) => [styles.tapZone, pressed && styles.tapZonePressed]}
-          onPress={() => onTap?.()}
-        >
-          <Text style={styles.tapLabel}>Tap</Text>
-        </Pressable>
-        <ActionButton label="B" onHold={onSecondaryAction} />
-      </View>
-    </View>
-  );
-}
-
-export function TemplateD({ onSwipe, onLane, onPrimaryAction }: ControlTemplateProps) {
+export function TemplateB({ onSwipe, onLane, onPrimaryAction }: ControlTemplateProps) {
   const insets = useSafeAreaInsets();
   const swipeStart = useRef({ x: 0, y: 0 });
 
   return (
-    <View style={[styles.dWrap, { paddingBottom: Math.max(insets.bottom, 12), paddingHorizontal: insets.left + 8 }]}>
+    <View style={[styles.bWrap, { paddingBottom: Math.max(insets.bottom, 12), paddingHorizontal: insets.left + 8 }]}>
       <View
-        testID="control-template-d-swipe"
+        testID="control-template-b-swipe"
         style={styles.swipeZone}
         onTouchStart={(e) => {
           swipeStart.current = { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY };
@@ -106,7 +65,7 @@ export function TemplateD({ onSwipe, onLane, onPrimaryAction }: ControlTemplateP
         {(['L', 'C', 'R'] as const).map((label, i) => (
           <Pressable
             key={label}
-            testID={`control-template-d-lane-${i}`}
+            testID={`control-template-b-lane-${i}`}
             style={({ pressed }) => [styles.laneBtn, pressed && styles.laneBtnPressed]}
             onPress={() => onLane?.(i as 0 | 1 | 2)}
           >
@@ -114,7 +73,7 @@ export function TemplateD({ onSwipe, onLane, onPrimaryAction }: ControlTemplateP
           </Pressable>
         ))}
       </View>
-      <ActionButton label="Action" testID="control-template-d-action" onHold={onPrimaryAction} />
+      <ActionButton label="Action" testID="control-template-b-action" onHold={onPrimaryAction} />
     </View>
   );
 }
@@ -144,28 +103,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 20,
   },
-  cRight: {
-    alignItems: 'flex-end',
-    gap: 10,
-  },
-  tapZone: {
-    width: 120,
-    height: 72,
-    borderRadius: 12,
-    backgroundColor: 'rgba(80,160,255,0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-  },
-  tapZonePressed: {
-    opacity: 0.8,
-  },
-  tapLabel: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  dWrap: {
+  bWrap: {
     width: '100%',
     gap: 10,
     alignItems: 'stretch',

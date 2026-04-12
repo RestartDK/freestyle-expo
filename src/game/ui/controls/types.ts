@@ -1,4 +1,4 @@
-export type ControlTemplateId = 'A' | 'B' | 'C' | 'D';
+export type ControlTemplateId = 'A' | 'B';
 
 export type Vec2 = { x: number; y: number };
 
@@ -10,16 +10,10 @@ export type ControlTemplateProps = {
   template: ControlTemplateId;
   /** Primary move / locomotion (left stick or equivalent). */
   onMove?: (v: Vec2) => void;
-  /** Aiming / camera (right stick in twin-stick layouts). */
-  onMoveSecondary?: (v: Vec2) => void;
   /** Primary action (e.g. fire); true while the control is held. */
   onPrimaryAction?: (pressed: boolean) => void;
-  /** Secondary action (e.g. jump / reload). */
-  onSecondaryAction?: (pressed: boolean) => void;
-  /** Discrete tap (template C secondary region). */
-  onTap?: () => void;
-  /** Swipe deltas in template D swipe zone (screen-space). */
+  /** Swipe deltas in template B swipe zone (screen-space). */
   onSwipe?: (delta: Vec2) => void;
-  /** Lane taps in template D (left / center / right). */
+  /** Lane taps in template B (left / center / right). */
   onLane?: (lane: 0 | 1 | 2) => void;
 };
