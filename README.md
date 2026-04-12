@@ -55,11 +55,21 @@ Use **`GameShell`** (`@/game/ui/GameShell`) so the GL view sits under a full-scr
 
 **`CanvasScene`** (`@/game/ui/CanvasScene`) is an optional **expo-gl** + **Three.js** harness that loads bundled GLBs from **`glbRegistry`** (not mounted on the root route). Use it when you need a minimal r3f scene without the full game. **`ControlTemplateSwitcher`** (`@/game/ui/ControlTemplateSwitcher`) is available if you mount templates **A–D** in your own screen. The **root route** (`src/app/index.tsx`) renders only **`@/game/Game`** — there is no separate dev QA route.
 
-**Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, `CanvasScene`, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`).
+**Game code layout:** The single live game entry is **`src/game/Game.tsx`**. Simulation (`state`, `step`, `input`, …) and the **`@/game/controls`** facade live under **`src/game/`**; React UI (shell, `CanvasScene`, control templates) under **`src/game/ui/`**. Generated plans from external pipelines go under **`src/game/generated/`** (e.g. `game-plan.ts`, `asset-manifest.ts`, `loadGeneratedGlb.ts`).
 
 ## GLTF / Expo GL note
 
 On native Expo builds, textured GLBs may log warnings such as `EXGL: gl.pixelStorei() doesn't support this parameter yet!`. That warning usually comes from Three texture upload paths and is often non-fatal, but it is noisy and can hide real asset issues. The default starter game therefore uses simple geometry instead of textured GLBs. Keep GLTF experiments in dedicated game code or the dev harness until you have verified they render correctly on device.
+
+## Generated GLB contract
+
+For agent-generated models, use one loading path only:
+
+1. Add a static Metro-discoverable `require()` entry in **`src/game/generated/asset-manifest.ts`**
+2. Reference the asset by id from gameplay code
+3. Load it through **`src/game/generated/loadGeneratedGlb.ts`**
+
+Do not load generated models from raw `.glb` strings, Metro `/assets/?unstable_path=...` URLs, or `useGLTF` on native. Expo must resolve bundled assets through `expo-asset` first so the loader receives a local file URI.
 
 ### Dependencies (controls & orientation)
 
