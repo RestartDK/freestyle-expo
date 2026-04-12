@@ -25,7 +25,7 @@ const materializeGeneratedGlb = async (assetId: string) => {
 
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    await FileSystem.writeAsStringAsync(localUri, entry.base64, {
+    await FileSystem.writeAsStringAsync(localUri, entry.chunks.join(''), {
       encoding: FileSystem.EncodingType.Base64,
     });
   }
