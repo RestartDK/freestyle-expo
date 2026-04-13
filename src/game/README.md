@@ -11,7 +11,7 @@
 
 **Generated plans:** The build pipeline (`src/game/generated/`) may add `game-plan.ts`, `asset-manifest.ts`, and helper-driven gameplay code — keep imports stable via `@/game/generated/...`.
 
-**Generated GLBs:** Register generated models in `src/game/generated/asset-manifest.ts` with Convex storage metadata (`downloadUrl`, `sha256`, `storageId`), then load them through `src/game/generated/loadGeneratedGlb.ts`. Do not pass raw `.glb` strings, raw download URLs, Metro asset URLs, or `useGLTF` into gameplay code on native.
+**Generated GLBs:** Register models in `src/game/generated/asset-manifest.ts` (chunked sidecars and/or a Convex `downloadUrl`), then load through `src/game/generated/loadGeneratedGlb.ts`. Do not pass raw `.glb` strings, Metro asset URLs, or `useGLTF` into gameplay code on native.
 
 **Template default:** The starter home route uses simple geometry only, so the default project stays mobile-safe and avoids native GLTF texture quirks. Keep textured GLB experiments behind dedicated game logic or dev harnesses.
 

@@ -8,18 +8,18 @@ This folder is reserved for pipeline-generated source such as:
 
 ## GLB rule for native Expo
 
-Generated `.glb` files must follow one path only:
+Generated `.glb` files must go through `loadGeneratedGlb()` only. Register each model in `asset-manifest.ts` using **either**:
 
-1. Register the generated model in `asset-manifest.ts` with Convex storage metadata
-2. Reference that entry by id from gameplay code
-3. Load it through `loadGeneratedGlb()`
+1. **Chunked sidecars** — base64 chunks under `asset-blobs/` (offline / template-friendly), or
+2. **Convex `downloadUrl`** — pipeline VMs fetch bytes, then the same loader writes a cache file and runs `GLTFLoader`.
+
+`loadGeneratedGlb` always normalizes mesh/material names after parse so Tripo-style UUIDs with hyphens cannot break GLSL `SHADER_NAME` defines on native.
 
 Do not:
 
 - pass raw `.glb` string paths into loaders
 - use Metro `/assets/?unstable_path=...` URLs directly
 - call `Asset.fromModule(...).downloadAsync()` from gameplay files
-- perform ad-hoc `fetch()` / file-system download logic outside `loadGeneratedGlb.ts`
 - use `useGLTF` for generated native models
 
-Why: on iOS/Android with Expo Go, generated models should come from a normal HTTPS endpoint, be cached to a local file, and only then be passed to `GLTFLoader`.
+Why: on iOS/Android, the loader must receive a real local file URI. `loadGeneratedGlb` is the single place that materializes remote or embedded bytes and sanitizes names for WebGL.

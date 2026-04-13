@@ -24,12 +24,36 @@ const materializeGeneratedGlb = async (assetId: string) => {
   const localUri = `${directory}${assetId}-${entry.sha256.slice(0, 12)}-${entry.fileName}`;
   const fileInfo = await FileSystem.getInfoAsync(localUri);
 
-  if (!fileInfo.exists) {
-    await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    await FileSystem.writeAsStringAsync(localUri, entry.chunks.join(''), {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+  if (fileInfo.exists) {
+    return localUri;
   }
+
+  await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+
+  const downloadUrl =
+    typeof entry.downloadUrl === 'string' && entry.downloadUrl.length > 0
+      ? entry.downloadUrl
+      : null;
+
+  if (downloadUrl) {
+    const downloadResult = await FileSystem.downloadAsync(downloadUrl, localUri);
+    if (downloadResult.status !== 200) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true });
+      throw new Error(
+        `Failed to download generated GLB "${assetId}" (${downloadResult.status}).`
+      );
+    }
+    return localUri;
+  }
+
+  const chunks = entry.chunks;
+  if (!chunks || chunks.length === 0) {
+    throw new Error(`Generated GLB "${assetId}" has no chunks and no downloadUrl.`);
+  }
+
+  await FileSystem.writeAsStringAsync(localUri, chunks.join(''), {
+    encoding: FileSystem.EncodingType.Base64,
+  });
 
   return localUri;
 };
