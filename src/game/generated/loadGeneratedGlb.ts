@@ -1,12 +1,13 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import type { Material, Object3D } from 'three';
 
 import { getGeneratedAssetEntry } from './asset-manifest';
 
 /**
  * Native-safe generated model loader.
  * Generated gameplay code should call this helper instead of loading raw paths,
- * Metro asset URLs, or ad-hoc network/file-system logic in gameplay code.
+ * Metro asset URLs, or writing files directly in gameplay code.
  */
 const getGeneratedAssetDirectory = () => {
   const baseDirectory = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
@@ -25,18 +26,70 @@ const materializeGeneratedGlb = async (assetId: string) => {
 
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    const downloadResult = await FileSystem.downloadAsync(entry.downloadUrl, localUri);
-    if (downloadResult.status !== 200) {
-      await FileSystem.deleteAsync(localUri, { idempotent: true });
-      throw new Error(
-        `Failed to download generated GLB "${assetId}" (${downloadResult.status}).`
-      );
-    }
+    await FileSystem.writeAsStringAsync(localUri, entry.chunks.join(''), {
+      encoding: FileSystem.EncodingType.Base64,
+    });
   }
 
   return localUri;
 };
 
+const INVALID_SHADER_IDENTIFIER = /[^A-Za-z0-9_]+/g;
+const TRIM_EDGE_UNDERSCORES = /^_+|_+$/g;
+const VALID_SHADER_IDENTIFIER_START = /^[A-Za-z_]/;
+
+const sanitizeShaderIdentifier = (name: string, fallback: string) => {
+  const normalized = name
+    .trim()
+    .replace(INVALID_SHADER_IDENTIFIER, '_')
+    .replace(TRIM_EDGE_UNDERSCORES, '');
+
+  if (!normalized) {
+    return fallback;
+  }
+
+  return VALID_SHADER_IDENTIFIER_START.test(normalized)
+    ? normalized
+    : `${fallback}_${normalized}`;
+};
+
+const sanitizeMaterialName = (material: Material, seenMaterials: WeakSet<Material>) => {
+  if (seenMaterials.has(material)) {
+    return;
+  }
+
+  seenMaterials.add(material);
+  material.name = sanitizeShaderIdentifier(material.name, 'generated_material');
+};
+
+const sanitizeGeneratedGlb = (
+  gltf: Awaited<ReturnType<GLTFLoader['loadAsync']>>
+) => {
+  const seenMaterials = new WeakSet<Material>();
+
+  gltf.scene.traverse((object) => {
+    const sceneObject = object as Object3D & {
+      material?: Material | Material[];
+    };
+
+    sceneObject.name = sanitizeShaderIdentifier(sceneObject.name, 'generated_node');
+
+    if (Array.isArray(sceneObject.material)) {
+      for (const material of sceneObject.material) {
+        sanitizeMaterialName(material, seenMaterials);
+      }
+      return;
+    }
+
+    if (sceneObject.material) {
+      sanitizeMaterialName(sceneObject.material, seenMaterials);
+    }
+  });
+
+  return gltf;
+};
+
 export async function loadGeneratedGlb(loader: GLTFLoader, assetId: string) {
-  return loader.loadAsync(await materializeGeneratedGlb(assetId));
+  // GLTF exporters can emit names that are invalid in generated GLSL defines.
+  return sanitizeGeneratedGlb(await loader.loadAsync(await materializeGeneratedGlb(assetId)));
 }
