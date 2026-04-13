@@ -6,7 +6,7 @@ import { getGeneratedAssetEntry } from './asset-manifest';
 /**
  * Native-safe generated model loader.
  * Generated gameplay code should call this helper instead of loading raw paths,
- * Metro asset URLs, or writing files directly in gameplay code.
+ * Metro asset URLs, or ad-hoc network/file-system logic in gameplay code.
  */
 const getGeneratedAssetDirectory = () => {
   const baseDirectory = FileSystem.cacheDirectory ?? FileSystem.documentDirectory;
@@ -25,9 +25,13 @@ const materializeGeneratedGlb = async (assetId: string) => {
 
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
-    await FileSystem.writeAsStringAsync(localUri, entry.chunks.join(''), {
-      encoding: FileSystem.EncodingType.Base64,
-    });
+    const downloadResult = await FileSystem.downloadAsync(entry.downloadUrl, localUri);
+    if (downloadResult.status !== 200) {
+      await FileSystem.deleteAsync(localUri, { idempotent: true });
+      throw new Error(
+        `Failed to download generated GLB "${assetId}" (${downloadResult.status}).`
+      );
+    }
   }
 
   return localUri;
