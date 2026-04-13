@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import { Platform } from 'react-native';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { Material, Object3D } from 'three';
 
@@ -58,6 +59,21 @@ const materializeGeneratedGlb = async (assetId: string) => {
   return localUri;
 };
 
+const getGeneratedGlbWebUri = (assetId: string) => {
+  const entry = getGeneratedAssetEntry(assetId);
+
+  if (typeof entry.downloadUrl === 'string' && entry.downloadUrl.length > 0) {
+    return entry.downloadUrl;
+  }
+
+  const chunks = entry.chunks;
+  if (!chunks || chunks.length === 0) {
+    throw new Error(`Generated GLB "${assetId}" has no chunks and no downloadUrl.`);
+  }
+
+  return `data:model/gltf-binary;base64,${chunks.join('')}`;
+};
+
 const INVALID_SHADER_IDENTIFIER = /[^A-Za-z0-9_]+/g;
 const TRIM_EDGE_UNDERSCORES = /^_+|_+$/g;
 const VALID_SHADER_IDENTIFIER_START = /^[A-Za-z_]/;
@@ -114,6 +130,11 @@ const sanitizeGeneratedGlb = (
 };
 
 export async function loadGeneratedGlb(loader: GLTFLoader, assetId: string) {
+  const uri =
+    Platform.OS === 'web'
+      ? getGeneratedGlbWebUri(assetId)
+      : await materializeGeneratedGlb(assetId);
+
   // GLTF exporters can emit names that are invalid in generated GLSL defines.
-  return sanitizeGeneratedGlb(await loader.loadAsync(await materializeGeneratedGlb(assetId)));
+  return sanitizeGeneratedGlb(await loader.loadAsync(uri));
 }
