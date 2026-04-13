@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -41,43 +40,6 @@ export function TemplateA({ onMove, onPrimaryAction }: ControlTemplateProps) {
   );
 }
 
-export function TemplateB({ onSwipe, onLane, onPrimaryAction }: ControlTemplateProps) {
-  const insets = useSafeAreaInsets();
-  const swipeStart = useRef({ x: 0, y: 0 });
-
-  return (
-    <View style={[styles.bWrap, { paddingBottom: Math.max(insets.bottom, 12), paddingHorizontal: insets.left + 8 }]}>
-      <View
-        testID="control-template-b-swipe"
-        style={styles.swipeZone}
-        onTouchStart={(e) => {
-          swipeStart.current = { x: e.nativeEvent.pageX, y: e.nativeEvent.pageY };
-        }}
-        onTouchEnd={(e) => {
-          const dx = e.nativeEvent.pageX - swipeStart.current.x;
-          const dy = e.nativeEvent.pageY - swipeStart.current.y;
-          onSwipe?.({ x: dx, y: dy });
-        }}
-      >
-        <Text style={styles.swipeHint}>Swipe</Text>
-      </View>
-      <View style={styles.laneRow}>
-        {(['L', 'C', 'R'] as const).map((label, i) => (
-          <Pressable
-            key={label}
-            testID={`control-template-b-lane-${i}`}
-            style={({ pressed }) => [styles.laneBtn, pressed && styles.laneBtnPressed]}
-            onPress={() => onLane?.(i as 0 | 1 | 2)}
-          >
-            <Text style={styles.laneLabel}>{label}</Text>
-          </Pressable>
-        ))}
-      </View>
-      <ActionButton label="Action" testID="control-template-b-action" onHold={onPrimaryAction} />
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
@@ -102,47 +64,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '700',
     fontSize: 20,
-  },
-  bWrap: {
-    width: '100%',
-    gap: 10,
-    alignItems: 'stretch',
-    pointerEvents: 'box-none',
-  },
-  swipeZone: {
-    minHeight: 72,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
-  },
-  swipeHint: {
-    color: 'rgba(255,255,255,0.85)',
-    fontWeight: '600',
-  },
-  laneRow: {
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'space-between',
-  },
-  laneBtn: {
-    flex: 1,
-    minHeight: 64,
-    borderRadius: 10,
-    backgroundColor: 'rgba(120,200,120,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.25)',
-  },
-  laneBtnPressed: {
-    opacity: 0.85,
-  },
-  laneLabel: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 18,
   },
 });

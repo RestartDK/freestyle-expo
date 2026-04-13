@@ -1,20 +1,17 @@
 import { StyleSheet, View } from 'react-native';
 
 import type { ControlTemplateProps } from './types';
-import { TemplateA, TemplateB } from './templates';
+import { TemplateA } from './templates';
 
 /**
- * Switchable on-screen controls for landscape games. Renders in a full-screen layer
+ * On-screen controls for landscape games. Renders in a full-screen layer
  * with `pointerEvents="box-none"` so only controls absorb touches; pair with `GameShell`
  * so the GL view sits underneath with `pointerEvents="none"`.
  */
 export function ControlTemplate(props: ControlTemplateProps) {
-  const { template } = props;
-
   return (
     <View style={styles.layer} pointerEvents="box-none">
-      {template === 'A' && <TemplateA {...props} />}
-      {template === 'B' && <TemplateB {...props} />}
+      <TemplateA {...props} />
     </View>
   );
 }
