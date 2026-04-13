@@ -1,4 +1,5 @@
 import * as FileSystem from 'expo-file-system/legacy';
+import { Platform } from 'react-native';
 import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { getGeneratedAssetEntry } from '@/game/generated/asset-manifest';
@@ -20,7 +21,15 @@ jest.mock('@/game/generated/asset-manifest', () => ({
 }));
 
 describe('loadGeneratedGlb', () => {
+  const originalPlatform = Platform.OS;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    Platform.OS = originalPlatform;
+  });
+
   it('sanitizes generated scene and material names before returning the GLTF', async () => {
+    Platform.OS = 'ios';
     jest.mocked(FileSystem.getInfoAsync).mockResolvedValue({ exists: true } as never);
     jest.mocked(getGeneratedAssetEntry).mockReturnValue({
       chunks: ['Z2xi'],
@@ -67,6 +76,7 @@ describe('loadGeneratedGlb', () => {
   });
 
   it('downloads Convex-hosted models when downloadUrl is set, then sanitizes names', async () => {
+    Platform.OS = 'ios';
     jest.mocked(FileSystem.getInfoAsync).mockResolvedValue({ exists: false } as never);
     jest.mocked(FileSystem.downloadAsync).mockResolvedValue({ status: 200 } as never);
     jest.mocked(getGeneratedAssetEntry).mockReturnValue({
@@ -99,6 +109,43 @@ describe('loadGeneratedGlb', () => {
       'https://example.convex.site/generated-assets?x=1',
       'file:///cache/generated-glb/asset_player_hero-06067acef447-labyrinth_runner_hero.glb'
     );
+    expect(FileSystem.writeAsStringAsync).not.toHaveBeenCalled();
+    expect(material.name).toBe('tripo_material_92075c47_daf3_4eb1_aec2_e7e3531bc26f');
+  });
+
+  it('uses the remote downloadUrl directly on web instead of materializing a file', async () => {
+    Platform.OS = 'web';
+    jest.mocked(getGeneratedAssetEntry).mockReturnValue({
+      chunks: null,
+      downloadUrl: 'https://example.convex.site/generated-assets?x=1',
+      exists: true,
+      fileName: 'labyrinth_runner_hero.glb',
+      kind: 'model',
+      notes: null,
+      path: 'assets/generated/labyrinth_runner_hero.glb',
+      sha256: '06067acef4477ff33c8600a0578ae3b24754928eb259fb1cf2606036b8c0a5e9',
+      source: 'tripo',
+    });
+
+    const material = { name: 'tripo_material_92075c47-daf3-4eb1-aec2-e7e3531bc26f' };
+    const gltf = {
+      scene: {
+        traverse(callback: (object: { name: string; material?: typeof material }) => void) {
+          callback({ name: 'pipe theme', material });
+        },
+      },
+    };
+    const loader = {
+      loadAsync: jest.fn().mockResolvedValue(gltf),
+    };
+
+    await loadGeneratedGlb(loader as unknown as GLTFLoader, 'asset_player_hero');
+
+    expect(loader.loadAsync).toHaveBeenCalledWith(
+      'https://example.convex.site/generated-assets?x=1'
+    );
+    expect(FileSystem.getInfoAsync).not.toHaveBeenCalled();
+    expect(FileSystem.downloadAsync).not.toHaveBeenCalled();
     expect(FileSystem.writeAsStringAsync).not.toHaveBeenCalled();
     expect(material.name).toBe('tripo_material_92075c47_daf3_4eb1_aec2_e7e3531bc26f');
   });
